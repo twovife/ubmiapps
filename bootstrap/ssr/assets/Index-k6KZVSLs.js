@@ -1,0 +1,46 @@
+import { jsx } from "react/jsx-runtime";
+import { A as Authenticated } from "./AuthenticatedLayout-CUMtYop0.js";
+import ManPower from "./ManPower-jMzDMVYU.js";
+import "react";
+import "./Dropdown-tAzvTn5J.js";
+import "@inertiajs/react";
+import "./button-StO46bLt.js";
+import "@radix-ui/react-slot";
+import "class-variance-authority";
+import "./utils-H80jjgLf.js";
+import "clsx";
+import "tailwind-merge";
+import "lucide-react";
+import "react-icons/bi";
+import "hamburger-react";
+import "./dropdown-menu-BEELUTJf.js";
+import "@radix-ui/react-dropdown-menu";
+import "@radix-ui/react-icons";
+import "./SweetAlert-CPwvZdfJ.js";
+import "sweetalert2";
+import "sweetalert2-react-content";
+import "./Loading-DPcVnbEk.js";
+import "react-dom";
+import "@headlessui/react";
+import "./BadgeStatus-BDnUSm56.js";
+import "./badge-BDQK5pqs.js";
+import "./table-DgsbovDN.js";
+import "./GenerateUser-CG_MjEG4.js";
+import "./SelectList-DrCNDu1u.js";
+import "./dialog-5zuHJd4f.js";
+import "@radix-ui/react-dialog";
+import "./input-BH-oxdzi.js";
+import "./label-e-KMhPKP.js";
+import "@radix-ui/react-label";
+import "dayjs";
+import "./BargeStatus-B_JPokIk.js";
+import "./SearchComponent-BPnDq_4y.js";
+import "./SelectComponent-C78kOz17.js";
+import "./popover-eMhT0muz.js";
+import "@radix-ui/react-popover";
+const Index = ({ datas, auth, roles, ...props }) => {
+  return /* @__PURE__ */ jsx(Authenticated, { children: /* @__PURE__ */ jsx(ManPower, { datas }) });
+};
+export {
+  Index as default
+};
