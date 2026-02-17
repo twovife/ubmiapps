@@ -1,47 +1,42 @@
-# =========================
-# 1) PHP deps (Composer)
-# =========================
+
 FROM composer:2 AS php-deps
 
 WORKDIR /app
 
-# Copy composer files dulu untuk cache layer
 COPY composer.json composer.lock ./
 
-# Install deps TANPA menjalankan script Laravel
+
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
 
-# Copy seluruh source
 COPY . .
 
-# Jalankan script Laravel sekarang (setelah artisan ada)
+# Pastikan folder yang Laravel butuh ada
+RUN mkdir -p bootstrap/cache \
+  && chmod -R 775 bootstrap/cache
+
+
 RUN php artisan package:discover --ansi || true
 RUN composer dump-autoload --optimize
 
 
-# =========================
+
 # 2) Frontend build (Vite)
-# =========================
 FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app
 
-# Copy source + vendor dari stage php-deps
+# Ambil source + vendor dari stage php-deps
 COPY --from=php-deps /app /app
 
-# Install frontend deps
+
 RUN npm ci
 
-# Build assets (butuh vendor karena Ziggy)
+# Build assets
 RUN npm run build
 
-
-# =========================
-# 3) Runtime (PHP-FPM only)
-# =========================
 FROM php:8.2-fpm-alpine
 
-# Install system deps & PHP extensions
+# Install system deps
 RUN apk add --no-cache \
   bash \
   icu-dev \
@@ -56,18 +51,18 @@ RUN apk add --no-cache \
   zip \
   opcache
 
-# Copy PHP config
+# PHP config
 COPY docker/php.ini /usr/local/etc/php/conf.d/app.ini
 
 WORKDIR /var/www/html
 
-# Copy app + vendor dari php-deps
+# Copy app + vendor
 COPY --from=php-deps /app /var/www/html
 
-# Copy hasil build frontend (Vite)
+# Copy hasil build npm
 COPY --from=frontend-builder /app/public/build /var/www/html/public/build
 
-# Buat folder yang Laravel butuh + set permission
+# Siapkan folder minimum (fallback kalau jalan tanpa volume)
 RUN mkdir -p storage/framework/cache/data \
   storage/framework/sessions \
   storage/framework/views \
@@ -75,7 +70,7 @@ RUN mkdir -p storage/framework/cache/data \
   && chown -R www-data:www-data storage bootstrap/cache \
   && chmod -R 775 storage bootstrap/cache
 
-
+# Jalankan sebagai user non-root
 USER www-data
 
 CMD ["php-fpm"]
