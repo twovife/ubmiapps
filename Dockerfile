@@ -1,5 +1,7 @@
+FROM php:8.2-cli-alpine AS php-deps
 
-FROM composer:2 AS php-deps
+# install composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
@@ -36,7 +38,7 @@ RUN npm run build
 
 FROM php:8.2-fpm-alpine
 
-# Install system deps
+# Install system deps + build deps untuk PHP extensions
 RUN apk add --no-cache \
   bash \
   icu-dev \
@@ -44,12 +46,14 @@ RUN apk add --no-cache \
   libzip-dev \
   zip \
   unzip \
+  $PHPIZE_DEPS \
   && docker-php-ext-install \
   pdo_mysql \
   intl \
   mbstring \
   zip \
-  opcache
+  opcache \
+  && apk del $PHPIZE_DEPS
 
 # PHP config
 COPY docker/php.ini /usr/local/etc/php/conf.d/app.ini
@@ -62,6 +66,8 @@ COPY --from=php-deps /app /var/www/html
 # Copy hasil build npm
 COPY --from=frontend-builder /app/public/build /var/www/html/public/build
 
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 # Siapkan folder minimum (fallback kalau jalan tanpa volume)
 RUN mkdir -p storage/framework/cache/data \
   storage/framework/sessions \
@@ -73,4 +79,6 @@ RUN mkdir -p storage/framework/cache/data \
 # Jalankan sebagai user non-root
 USER www-data
 
-CMD ["php-fpm"]
+
+
+ENTRYPOINT ["/entrypoint.sh"]
