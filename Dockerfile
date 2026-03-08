@@ -38,6 +38,7 @@ RUN npm run build
 
 FROM php:8.2-fpm-alpine
 
+COPY docker/php-fpm.conf /usr/local/etc/php-fpm.d/zz-app.conf
 # Install system deps + build deps untuk PHP extensions
 RUN apk add --no-cache \
   bash \
