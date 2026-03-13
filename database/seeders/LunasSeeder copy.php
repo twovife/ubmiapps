@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
-class LunasSeeder extends Seeder
+class asdfg extends Seeder
 {
   /**
    * Run the database seeds.

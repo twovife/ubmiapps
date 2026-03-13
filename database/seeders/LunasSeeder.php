@@ -25,7 +25,8 @@ class LunasSeeder extends Seeder
       TransactionLoan::with([
         'loan_instalment:id,transaction_loan_id,nominal,transaction_date',
         'white_off:id,transaction_loan_id,nominal'
-      ])->where('transaction_loan_officer_grouping_id', 188)
+      ])
+        ->where('drop_date', '>=', '2025-11-01')
         ->where('status', 'success')
         ->chunk(1000, function ($loans) {
           foreach ($loans as $loan) {
